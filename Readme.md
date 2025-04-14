@@ -19,4 +19,4 @@ test "basic functionality" {
 }
 ```
 #### Output:
-![output:Size of String: 16Alignment of String: 8String: String {Len: 5Prefix: `shor`Rest (on the stack): `t`}String: String {Len: 13Prefix: `a lo`Rest (on the heap): a long string}Test Passed Successfully](image.png)
+![output:Size of String: 16Alignment of String: 8String: String {Len: 5Prefix: `shor`Rest (on the stack): `t`}String: String {Len: 13Prefix: `a lo`Rest (on the heap): a long string}Test Passed Successfully](output.png)
