@@ -44,21 +44,20 @@ const String = struct {
     pub fn is_heap_allocated(self: String) bool {
         return self.len > 12;
     }
-    pub fn get_heap_ptr(self: String) ?[*]u8 {
+    pub fn get_heap_ptr(self: String) ?[]u8 {
         if (is_heap_allocated(self)) {
-            return self.rest.ptr;
+            return self.rest.ptr[0..self.len];
         } else {
             return null;
         }
     }
-    // pub fn deinit(self: String) void {
-    //     self.len = 0;
-    //     self.prefix = [_]u8{0} ** 8;
-    //     if (self.len > 12) {
-    //         std.ArrayList(comptime T: type)
-    //         (self.rest.ptr);
-    //     }
-    // }
+    pub fn deinit(self: String, allocator: std.mem.Allocator) void {
+        // self.len = 0;
+        // self.prefix = [_]u8{0} ** 8;
+        if (self.get_heap_ptr()) |ptr| {
+            allocator.free(ptr);
+        }
+    }
     pub fn format(
         self: String,
         comptime fmt: []const u8,
@@ -91,15 +90,13 @@ pub fn main() void {
 test "basic test functionality" {
     const allocator = std.testing.allocator;
     const short_str = try String.from_str(allocator, "short");
+    defer short_str.deinit(allocator);
     const long_str = try String.from_str(allocator, "a long string");
+    defer long_str.deinit(allocator);
     std.debug.print("\nSize of String: {}", .{@sizeOf(String)});
     std.debug.print("\nAlignment of String: {}", .{@alignOf(String)});
     std.debug.print("\nString: {s}", .{short_str});
     std.debug.print("\nString: {s}", .{long_str});
-
     try testing.expect(10 == 10);
     std.debug.print("\nTest Passed Successfully", .{});
-    if (long_str.get_heap_ptr()) |ptr| {
-        allocator.free(ptr);
-    }
 }
